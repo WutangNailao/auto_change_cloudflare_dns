@@ -2,6 +2,7 @@ import configparser
 import json
 import logging
 import time
+
 import dns.resolver
 import requests
 
@@ -89,19 +90,24 @@ def task():
         logging.info("加载配置")
 
         # 查询dns记录获取ip地址
-        ip = getipaddr(domain=config.get("ddns", "domain"))
-        logging.info("获取到的dns解析记录是'%s'", ip)
+        ip = ''
+        newIp = getipaddr(domain=config.get("ddns", "domain"))
+        logging.info("获取到的dns解析记录是'%s'", newIp)
+        if newIp != ip:
+            ip = newIp
+            # 更改ip地址
+            Auth_Email = config.get("cloudflare", "email")
+            Auth_Key = config.get("cloudflare", "globalKey")
+            updater = CloudFlareDDNSUpdater(Auth_Email, Auth_Key)
+            domains = config.get("cloudflare", "domain").split(",")
+            # print(domains)
+            for i in domains:
+                ttl = config.getint("cloudflare", "ttl")
+                updater.updateARecord(i, ip, ttl)
+                logging.info("'%s'的dns记录更改为'%s'", i, ip)
 
-        # 更改ip地址
-        Auth_Email = config.get("cloudflare", "email")
-        Auth_Key = config.get("cloudflare", "globalKey")
-        updater = CloudFlareDDNSUpdater(Auth_Email, Auth_Key)
-        domains = config.get("cloudflare", "domain").split(",")
-        # print(domains)
-        for i in domains:
-            ttl = config.getint("cloudflare", "ttl")
-            updater.updateARecord(i, ip, ttl)
-            logging.info("'%s'的dns记录更改为'%s'", i, ip)
+        else:
+            logging.info("ip地址未更改")
 
         # 定时执行
         time.sleep(config.getint("cloudflare", "time"))
