@@ -1,10 +1,15 @@
 import configparser
 import json
-import logging
-import time
 
 import dns.resolver
 import requests
+
+original_domain = "home.chane.cyou"
+email = "884560995@qq.com"
+globalKey = "6249bda60c78b3283ec7b1a242d0c9360fde5"
+domain = ["chat.nailao.world"]
+ttl = 120
+time = 600
 
 
 class CloudFlareDDNSUpdater:
@@ -80,34 +85,23 @@ def getipaddr(domain: str):
 
 
 def task():
-    logging.basicConfig(filename="ddns.log", filemode="a", format="%(asctime)s %(name)s:%(levelname)s:%(message)s",
-                        datefmt="%d-%M-%Y %H:%M:%S", level=logging.DEBUG)
-
-
     # 配置加载
     config = configparser.ConfigParser()
     config.read("conf.ini", encoding="utf-8")
     config.sections()  # 获取section节点
-    logging.info("加载配置")
 
     # 查询dns记录获取ip地址
-    ip = ''
-    newIp = getipaddr(domain=config.get("ddns", "domain"))
-    logging.info("获取到的dns解析记录是'%s'", newIp)
-    if newIp != ip:
-        ip = newIp
-        # 更改ip地址
-        Auth_Email = config.get("cloudflare", "email")
-        Auth_Key = config.get("cloudflare", "globalKey")
-        updater = CloudFlareDDNSUpdater(Auth_Email, Auth_Key)
-        domains = config.get("cloudflare", "domain").split(",")
-        # print(domains)
-        for i in domains:
-            ttl = config.getint("cloudflare", "ttl")
-            updater.updateARecord(i, ip, ttl)
-            logging.info("'%s'的dns记录更改为'%s'", i, ip)
-        else:
-            logging.info("ip地址未更改")
+    ip = getipaddr(domain=original_domain)
 
-        # 定时执行
-        # time.sleep(config.getint("cloudflare", "time"))
+    # 更改ip地址
+    Auth_Email = email
+    Auth_Key = globalKey
+    updater = CloudFlareDDNSUpdater(Auth_Email, Auth_Key)
+    domains = domain
+    # print(domains)
+    for i in domains:
+        updater.updateARecord(i, ip, ttl)
+
+
+if __name__ == '__main__':
+    task()

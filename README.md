@@ -3,6 +3,10 @@
 目前只支持更改a类记录
 目前还有很多bug，未设置进程守护
 
-依赖：
-    urllib3 <= 1.25.11
-
+青龙依赖
+1. requests
+2. dnspython
+3. docutils
+4. service
+5. urllib3
+6. configparser
