@@ -85,11 +85,6 @@ def getipaddr(domain: str):
 
 
 def task():
-    # 配置加载
-    config = configparser.ConfigParser()
-    config.read("conf.ini", encoding="utf-8")
-    config.sections()  # 获取section节点
-
     # 查询dns记录获取ip地址
     ip = getipaddr(domain=original_domain)
 
