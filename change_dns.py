@@ -4,10 +4,10 @@ import json
 import dns.resolver
 import requests
 
-original_domain = "home.chane.cyou"
-email = "884560995@qq.com"
-globalKey = "6249bda60c78b3283ec7b1a242d0c9360fde5"
-domain = ["chat.nailao.world"]
+original_domain = "xxx.xxx.xxx"
+email = ""
+globalKey = ""
+domain = ["xxx.xxx.xxx"]
 ttl = 120
 time = 600
 
